@@ -31,9 +31,13 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = "my.edu.tarc.lab44";
     ListView listViewCourse;
     List<Course> caList;
+    List<Dog> daList;
+    List<Event> eaList;
+    List<Organization> oaList;
+    List<User> uaList;
     private ProgressDialog pDialog;
     //TODO: Please update the URL to point to your own server
-    private static String GET_URL = "https://bait2073.000webhostapp.com/select_course.php";
+    private static String GET_URL = "https://khorwe.000webhostapp.com/select_user.php";
     RequestQueue queue;
 
     @Override
@@ -46,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
         listViewCourse = (ListView) findViewById(R.id.listViewRecords);
         pDialog = new ProgressDialog(this);
         caList = new ArrayList<>();
+        daList = new ArrayList<>();
+        eaList = new ArrayList<>();
+        oaList = new ArrayList<>();
+        uaList = new ArrayList<>();
 
         if (!isConnected()) {
             Toast.makeText(getApplicationContext(), "No network", Toast.LENGTH_LONG).show();
@@ -88,10 +96,238 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_sync) {
-            downloadCourse(getApplicationContext(), GET_URL);
+            downloadUser(getApplicationContext(), GET_URL);
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    private void downloadDog(Context context, String url) {
+        // Instantiate the RequestQueue
+        queue = Volley.newRequestQueue(context);
+
+        if (!pDialog.isShowing())
+            pDialog.setMessage("Syn with server...");
+        pDialog.show();
+
+        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
+                url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            daList.clear();
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject courseResponse = (JSONObject) response.get(i);
+                                String id = courseResponse.getString("id");
+                                int age = Integer.parseInt(courseResponse.getString("age"));
+                                String breed = courseResponse.getString("breed");
+                                String gender = courseResponse.getString("gender");
+                                String color = courseResponse.getString("color");
+                                String size = courseResponse.getString("size");
+                                String condition = courseResponse.getString("condition");
+                                String organization = courseResponse.getString("organization");
+                                Dog dog = new Dog(id, breed, color, condition, organization, gender, age, size);
+                                daList.add(dog);
+                            }
+                            loadDog();
+                            if (pDialog.isShowing())
+                                pDialog.dismiss();
+                        } catch (Exception e) {
+                            Toast.makeText(getApplicationContext(), "Error:" + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Toast.makeText(getApplicationContext(), "Error" + volleyError.getMessage(), Toast.LENGTH_LONG).show();
+                        if (pDialog.isShowing())
+                            pDialog.dismiss();
+                    }
+                });
+
+        // Set the tag on the request.
+        jsonObjectRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonObjectRequest);
+    }
+
+    private void loadDog() {
+        final DogAdapter adapter = new DogAdapter(this, R.layout.content_main, daList);
+        listViewCourse.setAdapter(adapter);
+        Toast.makeText(getApplicationContext(), "Count :" + daList.size(), Toast.LENGTH_LONG).show();
+    }
+
+    private void downloadEvent(Context context, String url) {
+        // Instantiate the RequestQueue
+        queue = Volley.newRequestQueue(context);
+
+        if (!pDialog.isShowing())
+            pDialog.setMessage("Syn with server...");
+        pDialog.show();
+
+        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
+                url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            eaList.clear();
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject courseResponse = (JSONObject) response.get(i);
+                                String id = courseResponse.getString("id");
+                                String name = courseResponse.getString("name");
+                                String desc = courseResponse.getString("desc");
+                                String date_time = courseResponse.getString("date_time");
+                                String location = courseResponse.getString("location");
+                                String organizer = courseResponse.getString("organizer");
+                                Event event = new Event(id, name, desc, date_time, location, organizer);
+                                eaList.add(event);
+                            }
+                            loadEvent();
+                            if (pDialog.isShowing())
+                                pDialog.dismiss();
+                        } catch (Exception e) {
+                            Toast.makeText(getApplicationContext(), "Error:" + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Toast.makeText(getApplicationContext(), "Error" + volleyError.getMessage(), Toast.LENGTH_LONG).show();
+                        if (pDialog.isShowing())
+                            pDialog.dismiss();
+                    }
+                });
+
+        // Set the tag on the request.
+        jsonObjectRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonObjectRequest);
+    }
+
+    private void loadEvent() {
+        final EventAdapter adapter = new EventAdapter(this, R.layout.content_main, eaList);
+        listViewCourse.setAdapter(adapter);
+        Toast.makeText(getApplicationContext(), "Count :" + eaList.size(), Toast.LENGTH_LONG).show();
+    }
+
+    private void downloadOrganization(Context context, String url) {
+        // Instantiate the RequestQueue
+        queue = Volley.newRequestQueue(context);
+
+        if (!pDialog.isShowing())
+            pDialog.setMessage("Syn with server...");
+        pDialog.show();
+
+        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
+                url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            oaList.clear();
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject courseResponse = (JSONObject) response.get(i);
+                                String id = courseResponse.getString("id");
+                                String name = courseResponse.getString("name");
+                                String location = courseResponse.getString("location");
+                                String owner = courseResponse.getString("owner");
+                                String phone_no = courseResponse.getString("phone_no");
+                                Organization organization = new Organization(id, name, location, owner, phone_no);
+                                oaList.add(organization);
+                            }
+                            loadOrganization();
+                            if (pDialog.isShowing())
+                                pDialog.dismiss();
+                        } catch (Exception e) {
+                            Toast.makeText(getApplicationContext(), "Error:" + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Toast.makeText(getApplicationContext(), "Error" + volleyError.getMessage(), Toast.LENGTH_LONG).show();
+                        if (pDialog.isShowing())
+                            pDialog.dismiss();
+                    }
+                });
+
+        // Set the tag on the request.
+        jsonObjectRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonObjectRequest);
+    }
+
+    private void loadOrganization() {
+        final OrganizationAdapter adapter = new OrganizationAdapter(this, R.layout.content_main, oaList);
+        listViewCourse.setAdapter(adapter);
+        Toast.makeText(getApplicationContext(), "Count :" + oaList.size(), Toast.LENGTH_LONG).show();
+    }
+
+    private void downloadUser(Context context, String url) {
+        // Instantiate the RequestQueue
+        queue = Volley.newRequestQueue(context);
+
+        if (!pDialog.isShowing())
+            pDialog.setMessage("Syn with server...");
+        pDialog.show();
+
+        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
+                url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            uaList.clear();
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject courseResponse = (JSONObject) response.get(i);
+                                String name = courseResponse.getString("name");
+                                int age = Integer.parseInt(courseResponse.getString("age"));
+                                String password = courseResponse.getString("password");
+                                String real_name = courseResponse.getString("real_name");
+                                String address = courseResponse.getString("address");
+                                String contact_no = courseResponse.getString("contact_no");
+                                String gender = courseResponse.getString("gender");
+                                String ic_no = courseResponse.getString("ic_no");
+                                User user = new User(name, password, real_name, address, contact_no, age, gender, ic_no);
+                                uaList.add(user);
+                            }
+                            loadUser();
+                            if (pDialog.isShowing())
+                                pDialog.dismiss();
+                        } catch (Exception e) {
+                            Toast.makeText(getApplicationContext(), "Error:" + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Toast.makeText(getApplicationContext(), "Error" + volleyError.getMessage(), Toast.LENGTH_LONG).show();
+                        if (pDialog.isShowing())
+                            pDialog.dismiss();
+                    }
+                });
+
+        // Set the tag on the request.
+        jsonObjectRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonObjectRequest);
+    }
+
+    private void loadUser() {
+        final UserAdapter adapter = new UserAdapter(this, R.layout.content_main, uaList);
+        listViewCourse.setAdapter(adapter);
+        Toast.makeText(getApplicationContext(), "Count :" + uaList.size(), Toast.LENGTH_LONG).show();
     }
 
     private void downloadCourse(Context context, String url) {
